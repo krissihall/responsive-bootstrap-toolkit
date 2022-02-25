@@ -21,7 +21,8 @@ let DocReady = function( fn ) {
  * License:   MIT
  * Version:   2.6.3 (2016-06-21)
  * Origin:    https://github.com/maciej-gurban/responsive-bootstrap-toolkit
- * Fork:      
+ * Fork:      https://github.com/krissihall/responsive-bootstrap-toolkit#bootstrap5vanilla
+ * Updates:   Forked repository was updated to Bootstrap 5 and jQuery removed as a dependency
  */
 
 let ResponsiveBootstrapToolkit = (function (ready) {
