@@ -7,7 +7,7 @@
     <title>Responsive Bootstrap Toolkit</title>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
     <!-- Include Bootstrap's stylesheet -->
-    <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="bootstrap.css" rel="stylesheet">
     <!-- Include stylesheet of this example -->
     <link rel="stylesheet" type="text/css" href="style.css" rel="stylesheet"/>
 </head>
@@ -22,7 +22,7 @@
 
         <div class="container-fluid">
             <div class="row">
-                <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6 col-sm-push-2 col-md-push-3 col-lg-push-3">
+                <div class="col col-12 col-sm-8 col-md-6 col-lg-6 col-xl-6 col-sm-push-2 col-md-push-3 col-lg-push-3 col-xl-push-3">
                     <br/>
                     <br/>
                     <p>Boxes below get highlighted whenever current viewport matches their expression. Alias of current breakpoint is visible in the top right corner.</p>
@@ -39,14 +39,25 @@
                             &gt;md
                         </div>
                     </div>
+
+                    <div class="current-break"></div>
+
+                    <div class="breaks hidden">
+                      <div class="point device-xs d-block d-sm-none">XS</div>
+                      <div class="point device-sm d-none d-sm-block d-md-none">SM</div>
+                      <div class="point device-md d-none d-md-block d-lg-none">MD</div>
+                      <div class="point device-lg d-none d-lg-block d-xl-none">LG</div>
+                      <div class="point device-xl d-none d-xl-block d-xxl-none">XL</div>
+                      <div class="point device-xxl d-none d-xxl-block">XXL</div>
+                    </div>
                 </div>
             </div>
         </div>
-
+        <div id="viewport-width" class="viewport-width"></div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-    <script src="../../dist/bootstrap-toolkit.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script> -->
+    <script src="../../dist/bootstrap-toolkit.js"></script>
     <script src="main.js"></script>
 
 </body>

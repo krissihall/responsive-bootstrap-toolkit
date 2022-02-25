@@ -1,42 +1,46 @@
 // Your own scripts
 
-(function($, document, window, viewport){
+(function(ready, document, window, viewport){
 
     var highlightBox = function( className ) {
-        $(className).addClass('active');
+        document.querySelector(className).classList.add('active');
     }
 
     var highlightBoxes = function() {
-        $('.comparison-operator').removeClass('active');
+        let $boxes = document.querySelectorAll('.comparison-operator');
+        for (let i = 0; i < $boxes.length; i++) {
+            $boxes[i].classList.remove('active');
+        }
 
-        if( viewport.is("<=sm") ) {
+        if (viewport.is("<=sm")) {
+            console.log('less than sm');
             highlightBox('.box-1');
         }
 
-        if( viewport.is("md") ) {
+        if (viewport.is("md")) {
+            console.log('is md');
             highlightBox('.box-2');
         }
 
-        if( viewport.is(">md") ) {
+        if (viewport.is(">md")) {
+            console.log('more than md');
             highlightBox('.box-3');
         }
+
+        let $ele = document.querySelector('.current-break');
+        $ele.innerHtml = viewport.current();
     }
 
     // Executes once whole document has been loaded
-    $(document).ready(function() {
-
+    ready(function() {
         highlightBoxes();
-
-        console.log('Current breakpoint:', viewport.current());
-
     });
 
-    $(window).resize(
-        viewport.changed(function(){
+    window.addEventListener('resize', viewport.changed(() => {
             highlightBoxes();
-
-            console.log('Current breakpoint:', viewport.current());
+            let $ele = document.getElementById('viewport-width');
+            $ele.innerHtml = window.innerWidth;
         })
     );
 
-})(jQuery, document, window, ResponsiveBootstrapToolkit);
+})(DocReady, document, window, ResponsiveBootstrapToolkit);

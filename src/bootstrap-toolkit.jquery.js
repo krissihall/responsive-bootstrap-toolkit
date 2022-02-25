@@ -1,68 +1,43 @@
-/**
-  * Equivalent to jQuery's ready() function.
-  *
-  * @see https://gomakethings.com/a-native-javascript-equivalent-of-jquerys-ready-method/
-  * @param {function} fn - The callback function.
-  * @return {void}
-  */
-let DocReady = function( fn ) {
-    if ( 'function' !== typeof fn ) { // Sanity check
-        return;
-    }
-    if ( document.readyState === 'complete'  ) {
-        return fn();
-    }
-    document.addEventListener( 'DOMContentLoaded', fn, false );
-};
-
 /*!
  * Responsive Bootstrap Toolkit
  * Author:    Maciej Gurban
  * License:   MIT
  * Version:   2.6.3 (2016-06-21)
  * Origin:    https://github.com/maciej-gurban/responsive-bootstrap-toolkit
- * Fork:      
  */
+var ResponsiveBootstrapToolkit = (function($){
 
-let ResponsiveBootstrapToolkit = (function (ready) {
     // Internal methods
-    let internal = {
+    var internal = {
 
         /**
          * Breakpoint detection divs for each framework version
          */
         detectionDivs: {
-            // Bootstrap 5
+            // Bootstrap 3
             bootstrap: {
-                'xs': 'device-xs d-block d-sm-none',
-                'sm': 'device-sm d-none d-sm-block d-md-none',
-                'md': 'device-md d-none d-md-block d-lg-none',
-                'lg': 'device-lg d-none d-lg-block d-xl-none',
-                'xl': 'device-xl d-none d-xl-block d-xxl-none',
-                'xxl': 'device-xxl d-none d-xxl-block'
+                'xs': $('<div class="device-xs visible-xs visible-xs-block"></div>'),
+                'sm': $('<div class="device-sm visible-sm visible-sm-block"></div>'),
+                'md': $('<div class="device-md visible-md visible-md-block"></div>'),
+                'lg': $('<div class="device-lg visible-lg visible-lg-block"></div>')
             },
             // Foundation 5
             foundation: {
-                'xsmall':  '<div class="device-xs show-for-xsmall-only"></div>',
-                'small':  '<div class="device-sm show-for-small-only"></div>',
-                'medium': '<div class="device-md show-for-medium-only"></div>',
-                'large':  '<div class="device-lg show-for-large-only"></div>',
-                'xlarge': '<div class="device-xl show-for-xlarge-only"></div>',
-                'xxlarge': '<div class="device-xxl show-for-xxlarge-only"></div>'
+                'small':  $('<div class="device-xs show-for-small-only"></div>'),
+                'medium': $('<div class="device-sm show-for-medium-only"></div>'),
+                'large':  $('<div class="device-md show-for-large-only"></div>'),
+                'xlarge': $('<div class="device-lg show-for-xlarge-only"></div>')
             }
         },
 
          /**
          * Append visibility divs after DOM laoded
          */
-        applyDetectionDivs: function () {
-            ready(function () {
-                for (const [key, value] of Object.entries(self.breakpoints)) {
-                    let $ele = document.createElement('div');
-                    $ele.classList = value;
-                    document.querySelector('.responsive-bootstrap-toolkit')
-                      .appendChild($ele);
-                }
+        applyDetectionDivs: function() {
+            $(document).ready(function(){
+                $.each(self.breakpoints, function(alias){
+                    self.breakpoints[alias].appendTo('.responsive-bootstrap-toolkit');
+                });
             });
         },
 
@@ -79,9 +54,9 @@ let ResponsiveBootstrapToolkit = (function (ready) {
         splitExpression: function( str ) {
 
             // Used operator
-            const operator = str.charAt(0);
+            var operator = str.charAt(0);
             // Include breakpoint equal to alias?
-            const orEqual  = (str.charAt(1) == '=') ? true : false;
+            var orEqual  = (str.charAt(1) == '=') ? true : false;
 
             /**
              * Index at which breakpoint name starts.
@@ -89,13 +64,13 @@ let ResponsiveBootstrapToolkit = (function (ready) {
              * For:  >sm, index = 1
              * For: >=sm, index = 2
              */
-            const index = 1 + (orEqual ? 1 : 0);
+            var index = 1 + (orEqual ? 1 : 0);
 
             /**
              * The remaining part of the expression, after the operator, will be treated as the
              * breakpoint name to compare with
              */
-            const breakpointName = str.slice(index);
+            var breakpointName = str.slice(index);
 
             return {
                 operator:       operator,
@@ -108,14 +83,14 @@ let ResponsiveBootstrapToolkit = (function (ready) {
          * Returns true if currently active breakpoint matches the expression
          */
         isAnyActive: function( breakpoints ) {
-            let found = false;
-            for (let i = 0; i < breakpoints.length; i++) {
-                let $ele = document.querySelector('.device-' + breakpoints[i]);
-                if (window.getComputedStyle($ele).display !== "none") {
+            var found = false;
+            $.each(breakpoints, function( index, alias ) {
+                // Once first breakpoint matches, return true and break out of the loop
+                if( self.breakpoints[ alias ].is(':visible') ) {
                     found = true;
-                    return true;
+                    return false;
                 }
-            }
+            });
             return found;
         },
 
@@ -124,19 +99,19 @@ let ResponsiveBootstrapToolkit = (function (ready) {
          */
         isMatchingExpression: function( str ) {
 
-            const expression = internal.splitExpression( str );
+            var expression = internal.splitExpression( str );
 
             // Get names of all breakpoints
-            const breakpointList = Object.keys(self.breakpoints);
+            var breakpointList = Object.keys(self.breakpoints);
 
             // Get index of sought breakpoint in the list
-            let pos = breakpointList.indexOf( expression.breakpointName );
+            var pos = breakpointList.indexOf( expression.breakpointName );
 
             // Breakpoint found
             if( pos !== -1 ) {
 
-                let start = 0;
-                let end   = 0;
+                var start = 0;
+                var end   = 0;
 
                 /**
                  * Parsing viewport.is('<=md') we interate from smallest breakpoint ('xs') and end
@@ -165,7 +140,7 @@ let ResponsiveBootstrapToolkit = (function (ready) {
                     end   = undefined;
                 }
 
-                const acceptedBreakpoints = breakpointList.slice(start, end);
+                var acceptedBreakpoints = breakpointList.slice(start, end);
 
                 return internal.isAnyActive( acceptedBreakpoints );
 
@@ -175,7 +150,7 @@ let ResponsiveBootstrapToolkit = (function (ready) {
     };
 
     // Public methods and properties
-    const self = {
+    var self = {
 
         /**
          * Determines default debouncing interval of 'changed' method
@@ -196,11 +171,10 @@ let ResponsiveBootstrapToolkit = (function (ready) {
          * Returns true if current breakpoint matches passed alias
          */
         is: function( str ) {
-            if (internal.isAnExpression( str )) {
+            if( internal.isAnExpression( str ) ) {
                 return internal.isMatchingExpression( str );
             }
-            let $ele = document.querySelector('.device-' + str);
-            return $ele && window.getComputedStyle($ele).display !== "none";
+            return self.breakpoints[ str ] && self.breakpoints[ str ].is(':visible');
         },
 
         /**
@@ -209,7 +183,7 @@ let ResponsiveBootstrapToolkit = (function (ready) {
         use: function( frameworkName, breakpoints ) {
             self.framework = frameworkName.toLowerCase();
 
-            if ( self.framework === 'bootstrap' || self.framework === 'foundation') {
+            if( self.framework === 'bootstrap' || self.framework === 'foundation') {
                 self.breakpoints = internal.detectionDivs[ self.framework ];
             } else {
                 self.breakpoints = breakpoints;
@@ -221,21 +195,21 @@ let ResponsiveBootstrapToolkit = (function (ready) {
         /**
          * Returns current breakpoint alias
          */
-         current: function(){
-             let name = 'unrecognized';
-             for (const [key, value] of Object.entries(self.breakpoints)) {
-                 if (self.is(key)) {
-                     name = key;
-                 }
-             }
-             return name;
-         },
+        current: function(){
+            var name = 'unrecognized';
+            $.each(self.breakpoints, function(alias){
+                if (self.is(alias)) {
+                    name = alias;
+                }
+            });
+            return name;
+        },
 
         /*
          * Waits specified number of miliseconds before executing a callback
          */
         changed: function(fn, ms) {
-            let timer;
+            var timer;
             return function(){
                 clearTimeout(timer);
                 timer = setTimeout(function(){
@@ -247,10 +221,8 @@ let ResponsiveBootstrapToolkit = (function (ready) {
     };
 
     // Create a placeholder
-    ready(function () {
-        let $ele = document.createElement('div');
-        $ele.classList.add('responsive-bootstrap-toolkit');
-        document.body.appendChild($ele);
+    $(document).ready(function(){
+        $('<div class="responsive-bootstrap-toolkit"></div>').appendTo('body');
     });
 
     if( self.framework === null ) {
@@ -259,9 +231,8 @@ let ResponsiveBootstrapToolkit = (function (ready) {
 
     return self;
 
-})(DocReady);
+})(jQuery);
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = DocReady;
     module.exports = ResponsiveBootstrapToolkit;
 }
